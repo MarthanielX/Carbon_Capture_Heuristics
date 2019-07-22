@@ -11,6 +11,8 @@ package carbon_capture_netbeans;
  */
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.PriorityQueue;
 
 public class CCS_Network {
 
@@ -182,6 +184,61 @@ public class CCS_Network {
             matrix[path[i]][path[i + 1]].augmentFlow(amount);
         }
     }
+    
+    public PathCost findCheapestPath(int start, int end) throws Exception{
+        double amount = Math.min(getNode(start).getResidualCapacity(), 
+                getNode(end).getResidualCapacity());
+              
+        boolean[] visited = new boolean[n];      
+        int[] parent = new int[n];
+        for (int i = 0; i < n; i++){
+            parent[i]= -1;
+        }
+        double[] cost = new double[n]; 
+        for (int i = 0; i < n; i++){
+            cost[i]= Integer.MAX_VALUE;
+        }
+        cost[start] = 0;  
+        
+        PriorityQueue<IndexCostTuple> queue = new PriorityQueue<IndexCostTuple>();
+        queue.add(new IndexCostTuple(start, 0));
+        
+        while (!queue.isEmpty()){
+            IndexCostTuple current = queue.poll();
+            
+            // we found the target node
+            if (current.getIndex() == end){
+                ArrayList<Integer> path = new ArrayList<Integer>();
+                path.add(new Integer(end));
+                while(path.get(path.size() -1) != -1){
+                    path.add(parent[path.get(path.size() -1)]);
+                }
+                Collections.reverse(path);
+                if (path.get(0) != start){
+                    throw new Exception("I screwed up Dijkstra's");
+                }
+                return new PathCost(path, cost[end]);             
+            }
+            
+            // iterate through all possible neighbors of the current node
+            for (int i = 0; i < n; i++){
+                Edge e = matrix[current.getIndex()][i];
+                if ((!visited[i]) && (e != null) 
+                        && (current.getCost() + e.getCost(amount) < cost[i]) ){
+                    cost[i] = current.getCost() + e.getCost(amount);
+                    parent[i] = current.getIndex();
+                    
+                    // update the entry for this node in the queue
+                    IndexCostTuple newCost = new IndexCostTuple(i, cost[i]);
+                    queue.remove(newCost);
+                    queue.add(newCost);
+                }
+            }
+            visited[current.getIndex()] = true;
+        }
+        
+        return null; //the target node was unreachable
+    }
 
     public void printFlow() {
         System.out.println("\nTotal Flow:" + getFlow());
@@ -211,6 +268,87 @@ public class CCS_Network {
         }
         System.out.println(Arrays.deepToString(flows)
                 .replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
+    }
+    
+    private class PathCost {
+        ArrayList<Integer> path;
+        double cost;
+        
+        public PathCost(ArrayList<Integer> path, double cost) {
+            this.path = path;
+            this.cost = cost;
+        }
+
+        public ArrayList<Integer> getPath() {
+            return path;
+        }
+
+        public double getCost() {
+            return cost;
+        }
+
+        public void setPath(ArrayList<Integer> path) {
+            this.path = path;
+        }
+
+        public void setCost(double cost) {
+            this.cost = cost;
+        }
+        
+        public PathCost copy(){
+            return new PathCost(new ArrayList<Integer>(path), cost);
+        }
+    }
+    
+    private class IndexCostTuple implements Comparable<IndexCostTuple>{
+        int index;
+        double cost;
+
+        public IndexCostTuple(int index, double cost) {
+            this.index = index;
+            this.cost = cost;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public double getCost() {
+            return cost;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public void setCost(double cost) {
+            this.cost = cost;
+        }
+        
+        @Override
+        public int compareTo(IndexCostTuple other){
+            if (this.cost < other.getCost()){
+                return -1;
+            } else if (this.cost == other.getCost()){
+                return 0;
+            }
+            return 1;
+        }
+        
+        // Tuples are equal if they share the same index
+        // referenced Nicolai Parlgo's SitePont article when writing this method
+        @Override
+        public boolean equals(Object o){
+            if (this == o){
+                return true;
+            } else if (o == null){
+                return false;
+            } else if (getClass() != o.getClass()){
+                return false;
+            }
+            return (((IndexCostTuple)o).getIndex() == this.getIndex());
+        }
+        
     }
 
 }

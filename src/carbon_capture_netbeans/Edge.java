@@ -41,6 +41,29 @@ public class Edge {
         this.isOpen = false;
         this.flow = 0;
     }
+    
+        public Edge(int start, int end, double capacity, double fixed_cost, double variable_cost, boolean isOpen, double flow) {
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Edges must have non-negative capacity.");
+        }
+        if (fixed_cost < 0) {
+            throw new IllegalArgumentException("Edges must have non-negative fixed_cost.");
+        }
+        if (variable_cost < 0) {
+            throw new IllegalArgumentException("Edges must have non-negative variable_cost.");
+        }
+        if (start < 0 || end < 0) {
+            throw new IllegalArgumentException("Edges must have non-negative start and end indices.");
+        }
+
+        this.capacity = capacity;
+        this.fixed_cost = fixed_cost;
+        this.variable_cost = variable_cost;
+        this.start = start;
+        this.end = end;
+        this.isOpen = isOpen;
+        this.flow = flow;
+    }
 
     public double getCapacity() {
         return capacity;

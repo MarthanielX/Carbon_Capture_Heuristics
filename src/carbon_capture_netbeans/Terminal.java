@@ -43,6 +43,28 @@ public class Terminal {
         this.isOpen = false;
         this.flow = 0;
     }
+    
+        public Terminal(int index, boolean isSource, double capacity, double fixed_cost, double variable_cost, boolean isOpen, double flow) {
+        if (index < 0) {
+            throw new IllegalArgumentException("Terminals must have a positive index.");
+        }
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Terminals must have non-negative capacity.");
+        }
+        if (fixed_cost < 0) {
+            throw new IllegalArgumentException("Terminals must have non-negative fixed_cost.");
+        }
+        if (variable_cost < 0) {
+            throw new IllegalArgumentException("Termaminals must have non-negative variable_cost.");
+        }
+        this.index = index;
+        this.isSource = isSource;
+        this.capacity = capacity;
+        this.fixed_cost = fixed_cost;
+        this.variable_cost = variable_cost;
+        this.isOpen = isOpen;
+        this.flow = flow;
+    }
 
     public int getIndex() {
         return index;

@@ -6,6 +6,8 @@
 package carbon_capture_netbeans;
 
 /**
+ * Represents an instance of the Carbon Capture and Storage Problem: A set of
+ * sources, sinks, and edges each with a capacity and affine cost
  *
  * @author sauerberg
  */
@@ -312,101 +314,125 @@ public class CCS_Network {
         }
         System.out.println(Arrays.deepToString(flows)
                 .replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
-    
 
-}
+    }
+
+    public Affine_Cost_Flow_Network convertToAffineCostFlowNetwork() {
+        Edge[][] new_matrix = new Edge[n + 2][n + 2];
+        for (Terminal s : sources) {
+            new_matrix[0][s.getIndex() + 1] = new Edge(0, s.getIndex() + 1,
+                    s.getCapacity(), s.getFixed_cost(), s.getVariable_cost(),
+                    s.isOpen(), s.getFlow());
+        }
+        for (Terminal t : sinks) {
+            new_matrix[t.getIndex() + 1][n + 1] = new Edge(0, t.getIndex() + 1,
+                    t.getCapacity(), t.getFixed_cost(), t.getVariable_cost(),
+                    t.isOpen(), t.getFlow());
+        }
+        for (int row = 0; row < n; row++) {
+            for (int col = 0; col < n; col++) {
+                Edge e = matrix[row][col];
+                if (e != null) {
+                    new_matrix[row + 1][col + 1] = new Edge(e.getStart() + 1,
+                            e.getEnd() + 1, e.getCapacity(), e.getFixed_cost(),
+                            e.getVariable_cost(), e.isOpen(), e.getFlow());
+                }
+            }
+        }
+        return new Affine_Cost_Flow_Network(n + 2, new_matrix);
+    }
 
     public class PathCostFlow {
 
-    ArrayList<Integer> path;
-    double cost;
-    double flow;
+        ArrayList<Integer> path;
+        double cost;
+        double flow;
 
-    public PathCostFlow(ArrayList<Integer> path, double cost, double flow) {
-        this.path = path;
-        this.cost = cost;
-        this.flow = flow;
-    }
-
-    public ArrayList<Integer> getPath() {
-        return path;
-    }
-
-    public double getCost() {
-        return cost;
-    }
-
-    public double getFlow() {
-        return flow;
-    }
-
-    public void setPath(ArrayList<Integer> path) {
-        this.path = path;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    public void setFlow(double flow) {
-        this.flow = flow;
-    }
-
-    public PathCostFlow copy() {
-        return new PathCostFlow(new ArrayList<Integer>(path), cost, flow);
-    }
-}
-
-private class IndexCostTuple implements Comparable<IndexCostTuple> {
-
-    int index;
-    double cost;
-
-    public IndexCostTuple(int index, double cost) {
-        this.index = index;
-        this.cost = cost;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public double getCost() {
-        return cost;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    @Override
-    public int compareTo(IndexCostTuple other) {
-        if (this.cost < other.getCost()) {
-            return -1;
-        } else if (this.cost == other.getCost()) {
-            return 0;
+        public PathCostFlow(ArrayList<Integer> path, double cost, double flow) {
+            this.path = path;
+            this.cost = cost;
+            this.flow = flow;
         }
-        return 1;
-    }
 
-    // Tuples are equal if they share the same index
-    // referenced Nicolai Parlgo's SitePont article when writing this method
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (o == null) {
-            return false;
-        } else if (getClass() != o.getClass()) {
-            return false;
+        public ArrayList<Integer> getPath() {
+            return path;
         }
-        return (((IndexCostTuple) o).getIndex() == this.getIndex());
+
+        public double getCost() {
+            return cost;
+        }
+
+        public double getFlow() {
+            return flow;
+        }
+
+        public void setPath(ArrayList<Integer> path) {
+            this.path = path;
+        }
+
+        public void setCost(double cost) {
+            this.cost = cost;
+        }
+
+        public void setFlow(double flow) {
+            this.flow = flow;
+        }
+
+        public PathCostFlow copy() {
+            return new PathCostFlow(new ArrayList<Integer>(path), cost, flow);
+        }
     }
 
-}
+    private class IndexCostTuple implements Comparable<IndexCostTuple> {
+
+        int index;
+        double cost;
+
+        public IndexCostTuple(int index, double cost) {
+            this.index = index;
+            this.cost = cost;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public double getCost() {
+            return cost;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public void setCost(double cost) {
+            this.cost = cost;
+        }
+
+        @Override
+        public int compareTo(IndexCostTuple other) {
+            if (this.cost < other.getCost()) {
+                return -1;
+            } else if (this.cost == other.getCost()) {
+                return 0;
+            }
+            return 1;
+        }
+
+        // Tuples are equal if they share the same index
+        // referenced Nicolai Parlgo's SitePont article when writing this method
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            } else if (o == null) {
+                return false;
+            } else if (getClass() != o.getClass()) {
+                return false;
+            }
+            return (((IndexCostTuple) o).getIndex() == this.getIndex());
+        }
+
+    }
 
 }

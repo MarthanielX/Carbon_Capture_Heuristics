@@ -55,6 +55,13 @@ public class Carbon_Capture_NetBeans {
         
         graph.printFlow();
         System.out.println(graph.checkIsValid());
+        
+        Affine_Cost_Flow_Network net = graph.convertToAffineCostFlowNetwork();
+        CCS_Network graph2 = net.convertToCCS_Network();
+        
+        graph.printFlow();
+        System.out.println("Graph2:");
+        graph2.printFlow();
 
     }
     

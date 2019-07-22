@@ -115,7 +115,7 @@ public class Edge {
 
     public double getCost(double additional_flow) {
         if (capacity - flow - additional_flow < 0) {
-            return -1;
+            return Double.MAX_VALUE;
         } else if (!isOpen) {
             return fixed_cost + additional_flow * variable_cost;
         }

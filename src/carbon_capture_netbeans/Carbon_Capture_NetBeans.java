@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -27,7 +28,7 @@ public class Carbon_Capture_NetBeans {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         ArrayList<Terminal> sources = new ArrayList<Terminal>();
         sources.add(new Terminal(0, true, 100, 25, 1));
         sources.add(new Terminal(1, true, 50, 10, 1));
@@ -50,7 +51,8 @@ public class Carbon_Capture_NetBeans {
         System.out.println(graph.checkIsValid());
         graph.printFlow();
         
-        graph.augmentAlongPath(100, new int[]{0, 2, 4});
+        System.out.println(graph.solveSeanHeuristic(151));
+        
         graph.printFlow();
         System.out.println(graph.checkIsValid());
 

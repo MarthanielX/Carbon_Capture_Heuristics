@@ -50,4 +50,8 @@ public class PathCostFlow {
     public PathCostFlow copy() {
         return new PathCostFlow(new ArrayList<Integer>(path), cost, flow);
     }
+    
+    public double getFlowOverCost(){
+        return flow/cost;
+    }
 }

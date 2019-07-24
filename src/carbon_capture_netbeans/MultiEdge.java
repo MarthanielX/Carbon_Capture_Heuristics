@@ -143,5 +143,32 @@ public class MultiEdge implements Edge {
         }
         return -1;
     }
+    
+    @Override
+    public int getLevel(){
+        return level;
+    }
+    
+    @Override
+    public double getResidualCapacity(int level){
+        if(flow >= 0){
+            return capacities[level] - flow;
+        }
+        return - capacities[level] - flow;
+    }
+    
+    @Override
+    public double getResidualCapacity(){
+        return getResidualCapacity(level);
+    }
 
+    @Override
+    public double getFixedCostToIncreaseFlow() {
+        if (getResidualCapacity() > 0){
+            return 0;
+        } else if (level == fixed_costs.length -1){
+            return Double.MAX_VALUE;
+        }
+        return fixed_costs[level+1] - fixed_costs[level];
+    }
 }

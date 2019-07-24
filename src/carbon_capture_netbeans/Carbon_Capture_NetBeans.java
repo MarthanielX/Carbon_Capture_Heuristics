@@ -47,9 +47,9 @@ public class Carbon_Capture_NetBeans {
         edges.add(new SingleEdge(3, 4, 200, 10, .1));
         edges.add(new SingleEdge(3, 5, 200, 10, .1));
         
-        CCS_Network graph = new CCS_Network(6, sources, sinks, edges);
+        Single_Edge_CCS_Network graph = new Single_Edge_CCS_Network(6, sources, sinks, edges);
         
-        Affine_Cost_Flow_Network macf = graph.convertToAffineCostFlowNetwork();
+        Single_Edge_Flow_Network macf = graph.convertToAffineCostFlowNetwork();
         
         macf.solveSeanHeuristic(150);
         macf.printFlow();
@@ -62,8 +62,8 @@ public class Carbon_Capture_NetBeans {
         graph.printFlow();
         System.out.println(graph.checkIsValid());
         
-        Affine_Cost_Flow_Network net = graph.convertToAffineCostFlowNetwork();
-        CCS_Network graph2 = net.convertToCCS_Network();
+        Single_Edge_Flow_Network net = graph.convertToAffineCostFlowNetwork();
+        Single_Edge_CCS_Network graph2 = net.convertToCCS_Network();
         
         graph.printFlow();
         System.out.println("Graph2:");

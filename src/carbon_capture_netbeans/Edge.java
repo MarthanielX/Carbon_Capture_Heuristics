@@ -59,4 +59,26 @@ public interface Edge {
      */
     public boolean isValid();
     
+    /**
+     * @param level
+     * @return the additional amount of flow that could be routed if the pipeline were changed to level
+     */
+    public double getResidualCapacity(int level);
+    
+        
+    /**
+     * @return the remaining capacity at the current upgrade level 
+     */
+    public double getResidualCapacity();
+    
+    /**
+     * @return The current 'upgrade' level of the pipeline
+     */
+    public int getLevel();
+    
+    /**
+     * @return the cost to upgrade the edge if it has no residual capacity, 0 o.w
+     */
+    public double getFixedCostToIncreaseFlow();
+    
 }

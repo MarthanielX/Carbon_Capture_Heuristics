@@ -15,12 +15,12 @@ import java.util.PriorityQueue;
  *
  * @author sauerberg
  */
-public class Affine_Cost_Flow_Network {
+public class Single_Edge_Flow_Network {
 
     int n; // node count
     SingleEdge[][] matrix;
 
-    public Affine_Cost_Flow_Network(int n, SingleEdge[][] matrix) {
+    public Single_Edge_Flow_Network(int n, SingleEdge[][] matrix) {
         this.n = n;
         this.matrix = matrix;
     }
@@ -183,7 +183,7 @@ public class Affine_Cost_Flow_Network {
 
     }
 
-    public CCS_Network convertToCCS_Network() {
+    public Single_Edge_CCS_Network convertToCCS_Network() {
         ArrayList<Terminal> sources = new ArrayList<Terminal>();
         for (int i = 0; i < n; i++) {
             if (matrix[0][i] != null) {
@@ -218,7 +218,7 @@ public class Affine_Cost_Flow_Network {
             }
         }
 
-        return new CCS_Network(n - 2, sources, sinks, new_matrix);
+        return new Single_Edge_CCS_Network(n - 2, sources, sinks, new_matrix);
     }
 
 }

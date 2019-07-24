@@ -90,7 +90,7 @@ public class Flow_Network {
         for (int i = 0; i < n; i++) {
             for (Edge[] row : matrix) {
                 for (Edge e : row) {
-                    if (cost[e.getEnd()] > cost[e.getStart()] + e.getFixedCostToIncreaseFlow()) {
+                    if (e != null && cost[e.getEnd()] > cost[e.getStart()] + e.getFixedCostToIncreaseFlow()) {
                         cost[e.getEnd()] = cost[e.getStart()] + e.getFixedCostToIncreaseFlow();
                         pred[e.getEnd()] = e.getStart();
                     }
@@ -101,7 +101,7 @@ public class Flow_Network {
         // check for negative cycles
         for (Edge[] row : matrix) {
             for (Edge e : row) {
-                if (cost[e.getEnd()] > cost[e.getStart()] + e.getFixedCostToIncreaseFlow()) {
+                if (e != null && cost[e.getEnd()] > cost[e.getStart()] + e.getFixedCostToIncreaseFlow()) {
                     throw new IllegalArgumentException("The graph contains negative cycles.");
                 }
             }

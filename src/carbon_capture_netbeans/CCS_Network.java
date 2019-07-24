@@ -7,7 +7,7 @@ package carbon_capture_netbeans;
 
 /**
  *
- * @author j33m215
+ * @author sauerberg
  */
 public class CCS_Network {
     

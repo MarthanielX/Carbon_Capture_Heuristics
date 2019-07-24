@@ -71,7 +71,7 @@ public class Flow_Network {
     }
 
     /**
-     * Uses Bellman Ford to find the cheapest s-t path in terms of just fixed
+     * Uses Bellman-Ford to find the cheapest s-t path in terms of just fixed
      * costs
      *
      * @return A tuple containing the path that was found, its cost, and its
@@ -137,36 +137,6 @@ public class Flow_Network {
         while (demand - getFlow() > 0) {
             PathCostFlow cheapest = findCheapestPath();
             if (cheapest == null) {
-                return false; // max flow of network is less than demand
-            }
-            augmentAlongPath(cheapest.getPath(), cheapest.getFlow());
-        }
-        return true;
-    }
-
-    /**
-     * Greedily solves the Min-Cost Flow problem by repeatedly adding the s-t
-     * path with the best cost to flow ratio
-     *
-     * @param demand the required amount of flow
-     * @return returns false if the max flow is less than demand, true o.w.
-     * @throws Exception
-     */
-    public boolean solveSeanHeuristic(double demand) throws Exception {
-        while (demand - getFlow() > 0) {
-            PathCostFlow cheapest = new PathCostFlow(new ArrayList<Integer>(), Double.MAX_VALUE, 0);
-            for (int i = 0; i < n; i++) {
-                if (matrix[0][i] != null) {
-                    // find cheapest s-t path using this edge to determine flow
-                    PathCostFlow current = findCheapestPath(i, demand - getFlow());
-                    if (current != null
-                            && ((cheapest.getFlow() / cheapest.getCost())
-                            < (current.getFlow() / current.getCost()))) {
-                        cheapest = current;
-                    }
-                }
-            }
-            if (cheapest.getFlow() == 0) {
                 return false; // max flow of network is less than demand
             }
             augmentAlongPath(cheapest.getPath(), cheapest.getFlow());

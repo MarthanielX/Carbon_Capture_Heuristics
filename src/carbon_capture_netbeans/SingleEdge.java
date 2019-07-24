@@ -160,4 +160,24 @@ public class SingleEdge implements Edge {
                 start, end, getFlow(), getCurrentCost());
     }
 
+    @Override
+    public double getResidualCapacity(int level) {
+        return getResidualCapacity();
+    }
+
+    @Override
+    public int getLevel() {
+        return 0;
+    }
+
+    @Override
+    public double getFixedCostToIncreaseFlow() {
+        if (!isOpen){
+            return fixed_cost;
+        } else if (flow == capacity){
+            return Double.MAX_VALUE;
+        }
+        return 0;
+    }
+
 }

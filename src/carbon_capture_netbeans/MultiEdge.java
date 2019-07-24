@@ -16,7 +16,7 @@ public class MultiEdge implements Edge {
     double[] capacities;
     double[] fixed_costs;
     double[] variable_costs;
-    int level; // 0 means unopened
+    int level; // -1 means unopened
     double flow;
 
     public MultiEdge(int start, int end, double[] capacities, double[] fixed_costs, double[] variable_costs) {
@@ -90,7 +90,7 @@ public class MultiEdge implements Edge {
 
     @Override
     public boolean isOpen() {
-        return level == 0;
+        return level == -1;
     }
 
     @Override
@@ -105,7 +105,9 @@ public class MultiEdge implements Edge {
 
     @Override
     public double getCost(double additional_flow) {
-        return 0;
+        int newLevel = findMinLevel(additional_flow + flow);
+        return fixed_costs[newLevel] + variable_costs[newLevel] 
+                * (Math.abs(additional_flow + flow) - getCurrentCost());
     }
 
     @Override

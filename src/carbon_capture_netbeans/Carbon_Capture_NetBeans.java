@@ -37,17 +37,23 @@ public class Carbon_Capture_NetBeans {
         sinks.add(new Terminal(4, false, 100, 25, 1));
         sinks.add(new Terminal(5, false, 50, 10, 1));
         
-        ArrayList<Edge> edges = new ArrayList<Edge>();
-        edges.add(new Edge(0, 2, 200, 10, .1));
-        edges.add(new Edge(0, 3, 200, 10, .1));
-        edges.add(new Edge(1, 2, 200, 10, .1));
-        edges.add(new Edge(1, 3, 200, 10, .1));
-        edges.add(new Edge(2, 4, 200, 10, .1));
-        edges.add(new Edge(2, 5, 200, 10, .1));
-        edges.add(new Edge(3, 4, 200, 10, .1));
-        edges.add(new Edge(3, 5, 200, 10, .1));
+        ArrayList<SingleEdge> edges = new ArrayList<SingleEdge>();
+        edges.add(new SingleEdge(0, 2, 200, 10, .1));
+        edges.add(new SingleEdge(0, 3, 200, 10, .1));
+        edges.add(new SingleEdge(1, 2, 200, 10, .1));
+        edges.add(new SingleEdge(1, 3, 200, 10, .1));
+        edges.add(new SingleEdge(2, 4, 200, 10, .1));
+        edges.add(new SingleEdge(2, 5, 200, 10, .1));
+        edges.add(new SingleEdge(3, 4, 200, 10, .1));
+        edges.add(new SingleEdge(3, 5, 200, 10, .1));
         
         CCS_Network graph = new CCS_Network(6, sources, sinks, edges);
+        
+        Affine_Cost_Flow_Network macf = graph.convertToAffineCostFlowNetwork();
+        
+        macf.solveSeanHeuristic(150);
+        macf.printFlow();
+        /*
         System.out.println(graph.checkIsValid());
         graph.printFlow();
         
@@ -62,11 +68,14 @@ public class Carbon_Capture_NetBeans {
         graph.printFlow();
         System.out.println("Graph2:");
         graph2.printFlow();
+        */
 
     }
     
-    private void solve_Sean_Heuristic(CCS_Network graph, double demand){
-        
-    }
+    /** Ideas for other Heuristics:
+     * pick the path that's cheapest to open (Brendan), fully saturate
+     * repeatedly route the single cheapest unit of flow (slow)
+     *  
+    */
 
 }

@@ -21,9 +21,9 @@ public class CCS_Network {
     final private int n; // num vertices
     private ArrayList<Terminal> sources;
     private ArrayList<Terminal> sinks;
-    private Edge[][] matrix; // doesn't handle multi-edges. should create multi-edge class to handle that
+    private SingleEdge[][] matrix; // doesn't handle multi-edges. should create multi-edge class to handle that
 
-    public CCS_Network(int n, ArrayList<Terminal> sources, ArrayList<Terminal> sinks, Edge[][] matrix) {
+    public CCS_Network(int n, ArrayList<Terminal> sources, ArrayList<Terminal> sinks, SingleEdge[][] matrix) {
         this.n = n;
         this.sources = sources;
         this.sinks = sinks;
@@ -31,13 +31,13 @@ public class CCS_Network {
         this.matrix = matrix;
     }
 
-    public CCS_Network(int n, ArrayList<Terminal> sources, ArrayList<Terminal> sinks, ArrayList<Edge> edge_list) {
+    public CCS_Network(int n, ArrayList<Terminal> sources, ArrayList<Terminal> sinks, ArrayList<SingleEdge> edge_list) {
         this.n = n;
         this.sources = sources;
         this.sinks = sinks;
         errorCheckTerminals();
-        matrix = new Edge[n][n];
-        for (Edge edge : edge_list) {
+        matrix = new SingleEdge[n][n];
+        for (SingleEdge edge : edge_list) {
             // throws array index out of bounds exception if edges have bad node indices
             matrix[edge.getStart()][edge.getEnd()] = edge;
         }
@@ -80,8 +80,8 @@ public class CCS_Network {
         }
 
         // check cap constraints on edges
-        for (Edge[] row : matrix) {
-            for (Edge e : row) {
+        for (SingleEdge[] row : matrix) {
+            for (SingleEdge e : row) {
                 if (e != null && !e.isValid()) {
                     return false;
                 }
@@ -137,8 +137,8 @@ public class CCS_Network {
         for (Terminal t : sinks) {
             cost += t.getCurrentCost();
         }
-        for (Edge[] row : matrix) {
-            for (Edge e : row) {
+        for (SingleEdge[] row : matrix) {
+            for (SingleEdge e : row) {
                 if (e != null) {
                     cost += e.getCurrentCost();
                 }
@@ -239,7 +239,7 @@ public class CCS_Network {
 
             // iterate through all possible neighbors of the current node
             for (int i = 0; i < n; i++) {
-                Edge e = matrix[current.getIndex()][i];
+                SingleEdge e = matrix[current.getIndex()][i];
                 if ((!visited[i]) && (e != null)
                         && (current.getCost() + e.getCost(amount) < cost[i])) {
                     cost[i] = current.getCost() + e.getCost(amount);
@@ -259,13 +259,16 @@ public class CCS_Network {
 
     /**
      * Greedily solves the Min-Cost Flow problem by repeatedly adding the s-t
-     * path with the best cost to flow ratio
+     * path that saturates a (real) source with the best cost to flow ratio
      *
      * @param demand the required amount of flow
      * @return returns false if the max flow is less than demand, true o.w.
      * @throws Exception
      */
     public boolean solveSeanHeuristic(double demand) throws Exception {
+        //Note: this heuristic is slightly different from Sean's original heuristic
+        // bc it won't even consider using a (real) sink if that sink has residual capacity 
+        // less than the lowest (real) source residual capacity
 
         while (demand - getFlow() > 0) {
             PathCostFlow cheapest = new PathCostFlow(new ArrayList<Integer>(), Double.MAX_VALUE, 0);
@@ -279,7 +282,7 @@ public class CCS_Network {
                 }
             }
             if (cheapest.getFlow() == 0) {
-                return false;
+                return false; // max flow of network is less than demand
             }
             augmentAlongPath(cheapest.getPath(), cheapest.getFlow());
         }
@@ -318,121 +321,28 @@ public class CCS_Network {
     }
 
     public Affine_Cost_Flow_Network convertToAffineCostFlowNetwork() {
-        Edge[][] new_matrix = new Edge[n + 2][n + 2];
+        SingleEdge[][] new_matrix = new SingleEdge[n + 2][n + 2];
         for (Terminal s : sources) {
-            new_matrix[0][s.getIndex() + 1] = new Edge(0, s.getIndex() + 1,
+            new_matrix[0][s.getIndex() + 1] = new SingleEdge(0, s.getIndex() + 1,
                     s.getCapacity(), s.getFixed_cost(), s.getVariable_cost(),
                     s.isOpen(), s.getFlow());
         }
         for (Terminal t : sinks) {
-            new_matrix[t.getIndex() + 1][n + 1] = new Edge(0, t.getIndex() + 1,
+            new_matrix[t.getIndex() + 1][n + 1] = new SingleEdge(0, t.getIndex() + 1,
                     t.getCapacity(), t.getFixed_cost(), t.getVariable_cost(),
                     t.isOpen(), t.getFlow());
         }
         for (int row = 0; row < n; row++) {
             for (int col = 0; col < n; col++) {
-                Edge e = matrix[row][col];
+                SingleEdge e = matrix[row][col];
                 if (e != null) {
-                    new_matrix[row + 1][col + 1] = new Edge(e.getStart() + 1,
+                    new_matrix[row + 1][col + 1] = new SingleEdge(e.getStart() + 1,
                             e.getEnd() + 1, e.getCapacity(), e.getFixed_cost(),
                             e.getVariable_cost(), e.isOpen(), e.getFlow());
                 }
             }
         }
         return new Affine_Cost_Flow_Network(n + 2, new_matrix);
-    }
-
-    public class PathCostFlow {
-
-        ArrayList<Integer> path;
-        double cost;
-        double flow;
-
-        public PathCostFlow(ArrayList<Integer> path, double cost, double flow) {
-            this.path = path;
-            this.cost = cost;
-            this.flow = flow;
-        }
-
-        public ArrayList<Integer> getPath() {
-            return path;
-        }
-
-        public double getCost() {
-            return cost;
-        }
-
-        public double getFlow() {
-            return flow;
-        }
-
-        public void setPath(ArrayList<Integer> path) {
-            this.path = path;
-        }
-
-        public void setCost(double cost) {
-            this.cost = cost;
-        }
-
-        public void setFlow(double flow) {
-            this.flow = flow;
-        }
-
-        public PathCostFlow copy() {
-            return new PathCostFlow(new ArrayList<Integer>(path), cost, flow);
-        }
-    }
-
-    private class IndexCostTuple implements Comparable<IndexCostTuple> {
-
-        int index;
-        double cost;
-
-        public IndexCostTuple(int index, double cost) {
-            this.index = index;
-            this.cost = cost;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public double getCost() {
-            return cost;
-        }
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
-
-        public void setCost(double cost) {
-            this.cost = cost;
-        }
-
-        @Override
-        public int compareTo(IndexCostTuple other) {
-            if (this.cost < other.getCost()) {
-                return -1;
-            } else if (this.cost == other.getCost()) {
-                return 0;
-            }
-            return 1;
-        }
-
-        // Tuples are equal if they share the same index
-        // referenced Nicolai Parlgo's SitePont article when writing this method
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            } else if (o == null) {
-                return false;
-            } else if (getClass() != o.getClass()) {
-                return false;
-            }
-            return (((IndexCostTuple) o).getIndex() == this.getIndex());
-        }
-
     }
 
 }

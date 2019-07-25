@@ -16,19 +16,19 @@ import java.util.Arrays;
  * @author sauerberg
  */
 public class Carbon_Capture_NetBeans {
-   
+
     // ToDo List
     // Implement Sean's Heuristic Alg
     // Implement Brendan's Heuristic Alg (just cheapest path, not most cost effective)
-    
     // Code Improvement:
     // make a superclass of terminal and edge to handle cap, costs, flow, and isOpen 
     // make methods just return false and do nothing if the action was invalid, rather than throwing an exception
-
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
+
+        /*
         ArrayList<Terminal> sources = new ArrayList<Terminal>();
         sources.add(new Terminal(0, true, 100, 25, 1));
         sources.add(new Terminal(1, true, 50, 10, 1));
@@ -53,6 +53,19 @@ public class Carbon_Capture_NetBeans {
         
         macf.solveSeanHeuristic(150);
         macf.printFlow();
+         */
+        GraphGenerator generator = new GraphGenerator(20, 100, 100);
+        MultiEdge[] edges = generator.generateGraph();
+        Flow_Network graph = new Flow_Network(22, edges);
+
+        System.out.println(graph.getCost());
+        System.out.println(graph.getFlow());
+
+        graph.solveCheapestPathHeuristic(200);
+
+        System.out.println(graph.getCost());
+        System.out.println(graph.getFlow());
+
         /*
         System.out.println(graph.checkIsValid());
         graph.printFlow();
@@ -68,14 +81,13 @@ public class Carbon_Capture_NetBeans {
         graph.printFlow();
         System.out.println("Graph2:");
         graph2.printFlow();
-        */
-
+         */
     }
-    
-    /** Ideas for other Heuristics:
-     * pick the path that's cheapest to open (Brendan), fully saturate
-     * repeatedly route the single cheapest unit of flow (slow)
-     *  
-    */
 
+    /**
+     * Ideas for other Heuristics: pick the path that's cheapest to open
+     * (Brendan), fully saturate repeatedly route the single cheapest unit of
+     * flow (slow)
+     *
+     */
 }

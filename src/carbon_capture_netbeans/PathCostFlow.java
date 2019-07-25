@@ -52,6 +52,9 @@ public class PathCostFlow {
     }
     
     public double getFlowOverCost(){
+        if (cost == 0){
+            return Double.MAX_VALUE;
+        }
         return flow/cost;
     }
 }

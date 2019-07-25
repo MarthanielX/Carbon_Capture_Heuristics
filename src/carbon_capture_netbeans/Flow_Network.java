@@ -102,6 +102,7 @@ public class Flow_Network {
         for (Edge[] row : matrix) {
             for (Edge e : row) {
                 if (e != null && cost[e.getEnd()] > cost[e.getStart()] + e.getFixedCostToIncreaseFlow()) {
+                    // todo: if the graph really has a negative cycle we should return it instead of throwing an exception
                     throw new IllegalArgumentException("The graph contains negative cycles.");
                 }
             }
@@ -109,14 +110,18 @@ public class Flow_Network {
 
         // compute the path and capacity from the arrays
         double capacity = Double.MAX_VALUE;
-        ArrayList<Integer> path = new ArrayList<Integer>();
-        path.add(n);
+        ArrayList<Integer> path = new ArrayList<>();
+        path.add(n - 1);
         while (path.get(path.size() - 1) != 0) {
+            if (pred[path.get(path.size() - 1)] == -1) {
+                throw new IllegalArgumentException("Error in Bellman Ford");
+            }
             Edge e = matrix[pred[path.get(path.size() - 1)]][path.get(path.size() - 1)];
             if (e.getFixedCostToIncreaseFlow() == Double.MAX_VALUE) {
                 return null; // no path exists
             }
-            capacity = Math.min(capacity, e.getResidualCapacity());
+            capacity = Math.min(capacity, (e.getResidualCapacity() == 0)
+                    ? e.getResidualCapacity(e.getLevel() + 1) : e.getResidualCapacity());
             path.add(e.getStart());
         }
         Collections.reverse(path);
@@ -163,6 +168,8 @@ public class Flow_Network {
             for (Edge e : row) {
                 if (e != null && cost[e.getEnd()]
                         > cost[e.getStart()] + e.getCost(amount)) {
+                    // todo: if the graph really has a negative cycle
+                    // we should return it instead of throwing an exception
                     throw new IllegalArgumentException(
                             "The graph contains negative cycles.");
                 }
@@ -199,6 +206,8 @@ public class Flow_Network {
             if (cheapest == null) {
                 return false; // max flow of network is less than demand
             }
+            System.out.println("Flow = " + getFlow());
+            System.out.println("Cheapest flow: " + cheapest.getFlow());
             augmentAlongPath(cheapest.getPath(), cheapest.getFlow());
         }
         return true;

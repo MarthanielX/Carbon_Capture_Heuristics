@@ -42,7 +42,7 @@ public class MultiEdge implements Edge {
         this.capacities = capacities;
         this.fixed_costs = fixed_costs;
         this.variable_costs = variable_costs;
-        this.level = 0;
+        this.level = -1;
         this.flow = 0;
 
     }
@@ -100,13 +100,16 @@ public class MultiEdge implements Edge {
 
     @Override
     public double getCurrentCost() {
+        if (level == -1) {
+            return 0;
+        }
         return fixed_costs[level] + variable_costs[level] * Math.abs(flow);
     }
 
     @Override
     public double getCost(double additional_flow) {
         int newLevel = findMinLevel(additional_flow + flow);
-        return fixed_costs[newLevel] + variable_costs[newLevel] 
+        return fixed_costs[newLevel] + variable_costs[newLevel]
                 * (Math.abs(additional_flow + flow) - getCurrentCost());
     }
 
@@ -143,32 +146,45 @@ public class MultiEdge implements Edge {
         }
         return -1;
     }
-    
+
     @Override
-    public int getLevel(){
+    public int getLevel() {
         return level;
     }
-    
+
     @Override
-    public double getResidualCapacity(int level){
-        if(flow >= 0){
+    public double getResidualCapacity(int level) {
+        if (level == -1) {
+            return 0;
+        } else if (flow >= 0) {
             return capacities[level] - flow;
         }
-        return - capacities[level] - flow;
+        return -capacities[level] - flow;
     }
-    
+
     @Override
-    public double getResidualCapacity(){
+    public double getResidualCapacity() {
+        if (level == -1) {
+            return 0;
+        }
         return getResidualCapacity(level);
     }
 
     @Override
     public double getFixedCostToIncreaseFlow() {
-        if (getResidualCapacity() > 0){
+        if (getResidualCapacity() > 0) {
             return 0;
-        } else if (level == fixed_costs.length -1){
+        } else if (level == fixed_costs.length - 1) {
             return Double.MAX_VALUE;
+        } else if (level == -1) {
+            return fixed_costs[0];
         }
-        return fixed_costs[level+1] - fixed_costs[level];
+        return fixed_costs[level + 1] - fixed_costs[level];
     }
+
+    @Override
+    public String toString() {
+        return "MultiEdge{" + "start=" + start + ", end=" + end + ", capacities=" + capacities + ", fixed_costs=" + fixed_costs + ", variable_costs=" + variable_costs + ", level=" + level + ", flow=" + flow + '}';
+    }
+
 }

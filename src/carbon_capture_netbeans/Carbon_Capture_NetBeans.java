@@ -53,7 +53,9 @@ public class Carbon_Capture_NetBeans {
         
         macf.solveSeanHeuristic(150);
         macf.printFlow();
-         */
+        */ 
+        
+        
         GraphGenerator generator = new GraphGenerator(20, 100, 100);
         MultiEdge[] edges = generator.generateGraph();
         Flow_Network graph = new Flow_Network(22, edges);
@@ -65,6 +67,7 @@ public class Carbon_Capture_NetBeans {
 
         System.out.println(graph.getCost());
         System.out.println(graph.getFlow());
+        
 
         /*
         System.out.println(graph.checkIsValid());

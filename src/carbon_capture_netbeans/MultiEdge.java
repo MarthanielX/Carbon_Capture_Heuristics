@@ -109,6 +109,9 @@ public class MultiEdge implements Edge {
     @Override
     public double getCost(double additional_flow) {
         int newLevel = findMinLevel(additional_flow + flow);
+        if (newLevel == -1){
+            return Double.MAX_VALUE;
+        }
         return fixed_costs[newLevel] + variable_costs[newLevel]
                 * (Math.abs(additional_flow + flow) - getCurrentCost());
     }
@@ -159,14 +162,13 @@ public class MultiEdge implements Edge {
         } else if (flow >= 0) {
             return capacities[level] - flow;
         }
-        return -capacities[level] - flow;
+        // negative flow. should just return -flow??
+        return -flow;
+        //return -capacities[level] - flow;
     }
 
     @Override
     public double getResidualCapacity() {
-        if (level == -1) {
-            return 0;
-        }
         return getResidualCapacity(level);
     }
 
@@ -184,7 +186,10 @@ public class MultiEdge implements Edge {
 
     @Override
     public String toString() {
-        return "MultiEdge{" + "start=" + start + ", end=" + end + ", capacities=" + capacities + ", fixed_costs=" + fixed_costs + ", variable_costs=" + variable_costs + ", level=" + level + ", flow=" + flow + '}';
+        return "MultiEdge{" + "start=" + start + ", end=" + end + 
+                ", capacities=" + capacities + ", fixed_costs=" + 
+                fixed_costs + ", variable_costs=" + variable_costs + 
+                ", level=" + level + ", flow=" + flow + '}';
     }
 
 }

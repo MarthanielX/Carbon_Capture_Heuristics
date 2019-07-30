@@ -138,6 +138,9 @@ public class MultiEdge implements Edge {
 
     @Override
     public boolean isValid() {
+        if (level == -1){
+            return flow == 0;
+        }
         return capacities[level] >= Math.abs(flow);
     }
 

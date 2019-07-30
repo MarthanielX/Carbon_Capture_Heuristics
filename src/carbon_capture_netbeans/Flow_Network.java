@@ -206,9 +206,12 @@ public class Flow_Network {
             if (cheapest == null) {
                 return false; // max flow of network is less than demand
             }
-            System.out.println("Flow = " + getFlow());
+            System.out.println("Current Flow = " + getFlow());
+            System.out.println("Cheapest path: " + cheapest.getPath());
             System.out.println("Cheapest flow: " + cheapest.getFlow());
-            augmentAlongPath(cheapest.getPath(), cheapest.getFlow());
+            System.out.println("Cheapest cost: " + cheapest.getCost());
+            augmentAlongPath(cheapest.getPath(),
+                    Math.min(cheapest.getFlow(), demand - getFlow()));
         }
         return true;
     }
@@ -296,6 +299,44 @@ public class Flow_Network {
         System.out.println(Arrays.deepToString(flows)
                 .replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
 
+    }
+
+    public boolean isValid() {
+        for (Edge[] row : matrix) {
+            for (Edge e : row) {
+                if (e != null && !e.isValid()) {
+                    return false;
+                }
+            }
+        }
+
+        for (int i = 1; i < n - 2; i++) {
+            if (getFlowIn(i) != getFlowOut(i)){
+                return false;
+            }
+        }
+        
+        return getFlowOut(0) - getFlowIn(0) == getFlowIn(n-1) - getFlowOut(n-1);
+    }
+
+    private double getFlowIn(int node) {
+        double flow = 0;
+        for (int i = 0; i < n; i++) {
+            if (matrix[i][node] != null) {
+                flow += matrix[i][node].getFlow();
+            }
+        }
+        return flow;
+    }
+
+    private double getFlowOut(int node) {
+        double flow = 0;
+        for (int i = 0; i < n; i++) {
+            if (matrix[node][i] != null) {
+                flow += matrix[node][i].getFlow();
+            }
+        }
+        return flow;
     }
 
 }

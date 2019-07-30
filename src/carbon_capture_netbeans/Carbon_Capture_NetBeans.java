@@ -59,15 +59,14 @@ public class Carbon_Capture_NetBeans {
         GraphGenerator generator = new GraphGenerator(20, 100, 100);
         MultiEdge[] edges = generator.generateGraph();
         Flow_Network graph = new Flow_Network(22, edges);
-
-        System.out.println(graph.getCost());
-        System.out.println(graph.getFlow());
+        System.out.println(graph.isValid());
 
         graph.solveCheapestPathHeuristic(200);
 
-        System.out.println(graph.getCost());
-        System.out.println(graph.getFlow());
-        
+        System.out.println("Final Cost: " + graph.getCost());
+        System.out.println("Final Flow: " + graph.getFlow());
+
+        System.out.println(graph.isValid());
 
         /*
         System.out.println(graph.checkIsValid());

@@ -52,11 +52,11 @@ public class Reverse_MultiEdge implements Edge {
     }
     
     public double getResidualCapacity(int level){
-        return -edge.getResidualCapacity(level);
+        return edge.getResidualCapacity(level);
     }
     
     public double getResidualCapacity(){
-        return -edge.getResidualCapacity();
+        return edge.getResidualCapacity();
     }
     
     public int getLevel(){

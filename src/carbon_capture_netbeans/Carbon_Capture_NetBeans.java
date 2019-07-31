@@ -63,7 +63,7 @@ public class Carbon_Capture_NetBeans {
 
         graph.solveCheapestPathHeuristic(200);
 
-        System.out.println("Final Cost: " + graph.getCost());
+        System.out.println("\nFinal Cost: " + graph.getCost());
         System.out.println("Final Flow: " + graph.getFlow());
 
         System.out.println(graph.isValid());

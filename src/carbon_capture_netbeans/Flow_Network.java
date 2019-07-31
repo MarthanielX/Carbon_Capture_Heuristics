@@ -206,7 +206,7 @@ public class Flow_Network {
             if (cheapest == null) {
                 return false; // max flow of network is less than demand
             }
-            System.out.println("Current Flow = " + getFlow());
+            System.out.println("\nCurrent Flow = " + getFlow());
             System.out.println("Cheapest path: " + cheapest.getPath());
             System.out.println("Cheapest flow: " + cheapest.getFlow());
             System.out.println("Cheapest cost: " + cheapest.getCost());
@@ -305,6 +305,7 @@ public class Flow_Network {
         for (Edge[] row : matrix) {
             for (Edge e : row) {
                 if (e != null && !e.isValid()) {
+                    System.out.println("edge " + e + " invalid");
                     return false;
                 }
             }
@@ -312,6 +313,7 @@ public class Flow_Network {
 
         for (int i = 1; i < n - 2; i++) {
             if (getFlowIn(i) != getFlowOut(i)){
+                System.out.println("node " + i + " invalid");
                 return false;
             }
         }

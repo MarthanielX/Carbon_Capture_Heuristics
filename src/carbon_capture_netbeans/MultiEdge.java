@@ -190,8 +190,6 @@ public class MultiEdge implements Edge {
     @Override
     public String toString() {
         return "MultiEdge{" + "start=" + start + ", end=" + end + 
-                ", capacities=" + capacities + ", fixed_costs=" + 
-                fixed_costs + ", variable_costs=" + variable_costs + 
                 ", level=" + level + ", flow=" + flow + '}';
     }
 
